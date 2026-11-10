@@ -38,6 +38,8 @@
 #include <Library/TpmLib.h>
 #include <Library/FusaConfigLib.h>
 #include <GpioPinsVer2Lp.h>
+#include <Library/MemoryAllocationLib.h>
+#include "HdaVerbTable.h"
 
 #define CPU_PCIE_DT_HALO_MAX_ROOT_PORT     3
 #define CPU_PCIE_ULT_ULX_MAX_ROOT_PORT     3
@@ -410,6 +412,8 @@ UpdateFspConfig (
   EFI_STATUS                  Status;
   VBIOS_VBT_STRUCTURE         *VbtPtr;
   EFI_PLATFORM_FIRMWARE_BLOB  TsnCfgBlob;
+  UINT32                      *HdaVerbTablePtr;
+  UINT8                       HdaVerbTableNum;
 
   Address              = 0;
   FspsUpd              = (FSPS_UPD *) FspsUpdPtr;
@@ -1151,6 +1155,16 @@ UpdateFspConfig (
         FspsConfig->IomTypeCPortPadCfg[7] = GPIO_VER2_LP_GPP_H17;
         FspsConfig->TcssAuxOri = BIT4 | BIT6;
         FspsConfig->TcssHslOri = 0;
+        break;
+      case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
+        HdaVerbTablePtr = (UINT32 *) AllocateZeroPool (2 * sizeof (UINT32));
+        if (HdaVerbTablePtr != NULL) {
+          HdaVerbTableNum = 0;
+          HdaVerbTablePtr[HdaVerbTableNum++]   = (UINT32)(UINTN) &HdaVerbTableAlc897;
+          FspsConfig->PchHdaVerbTablePtr       = (UINT32)(UINTN) HdaVerbTablePtr;
+          FspsConfig->PchHdaVerbTableEntryNum  = HdaVerbTableNum;
+          DEBUG ((DEBUG_INFO, "Set verb ALC897 table.\n"));
+        }
         break;
       default:
         break;

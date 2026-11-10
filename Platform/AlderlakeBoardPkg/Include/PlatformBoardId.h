@@ -70,6 +70,9 @@ Defines Platform BoardIds
 #define BoardIdTestSDdr5UDimm1DRvp                    0x39
 #define PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP             0x19
 
+#define BoardIdRplSUatxDdr5UDimm                      0x2A
+#define PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM             0x1A
+
 #define BoardIdTestSDdr5SODimmRvp                     0x31  // S17
 #define PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP            0x11
 

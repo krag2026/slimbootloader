@@ -683,6 +683,9 @@ GetBoardId (
     case BoardIdTestSDdr5UDimm1DRvp:
       *PlatformId = PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP;
       break;
+    case BoardIdRplSUatxDdr5UDimm:
+      *PlatformId = PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM;
+      break;
     case BoardIdTestSDdr5SODimmRvp:
       *PlatformId = PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP;
       break;

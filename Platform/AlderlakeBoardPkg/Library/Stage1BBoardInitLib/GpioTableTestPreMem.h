@@ -13,7 +13,7 @@
 
 GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTableEarlyPreMemTestSDdr5UDimm1DRvp[] =
 {
-  {GPIO_VER4_S_GPP_F3,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioResetDefault,   GpioTermNone }}, //PEG_SLOT_PWREN
+  {GPIO_VER4_S_GPP_F4,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioResetDefault,   GpioTermNone }}, //PEG_SLOT_PWREN
   {GPIO_VER4_S_GPP_E2,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,      GpioIntDefault,          GpioPlatformReset,  GpioTermNone }}, //CPU PEG Slot1 Reset
 
   {GPIO_VER4_S_GPP_H16,  {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioPlatformReset,  GpioTermNone }}, //CPU M.2 SSD Slot Power enable

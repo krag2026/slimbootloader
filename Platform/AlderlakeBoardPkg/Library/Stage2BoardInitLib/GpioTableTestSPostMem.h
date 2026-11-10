@@ -59,9 +59,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTablePostMemTestsDdr5UDimmRv
   {GPIO_VER4_S_GPP_F2,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutDefault,  GpioIntEdge|GpioIntSci,  GpioHostDeepReset,  GpioTermNone, GpioPadConfigUnlock}}, // PCIe SLOT_3 Wake MIPI60 (Rework)
 
   // PEG SLOT_1
-  {GPIO_VER4_S_GPP_E6,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutDefault,  GpioIntEdge|GpioIntSci,  GpioHostDeepReset,  GpioTermNone, GpioPadConfigUnlock}}, // PEG SLOT_1 Wake
+  {GPIO_VER4_S_GPP_E6,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutHigh,  GpioIntEdge|GpioIntSci,  GpioHostDeepReset,  GpioTermNone, GpioPadConfigUnlock}}, // PEG SLOT_1 Wake
   {GPIO_VER4_S_GPP_F7,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutLow,      GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},                      // PEG_SLOT_DGPU_SEL_N, MIPI60 (Rework)
-  {GPIO_VER4_S_GPP_F9,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirInInv,   GpioOutDefault,  GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},                      // PEG_SLOT_DGPU_PWR_OK, MIPI60 (Rework)
+  {GPIO_VER4_S_GPP_F9,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirInInv,   GpioOutHigh,  GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},                      // PEG_SLOT_DGPU_PWR_OK, MIPI60 (Rework)
 
   // SATA
   {GPIO_VER4_S_GPP_R11,   {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioPlatformReset,  GpioTermNone}}, // SATA Direct power enable
@@ -105,7 +105,11 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTablePostMemTestsDdr5UDimmRv
   // ZPODD
   {GPIO_VER4_S_GPP_B1,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutDefault,  GpioIntLevel|GpioIntSci, GpioPlatformReset,  GpioTermNone, GpioPadConfigUnlock}}, // SATA_ODD_DA_N
   {GPIO_VER4_S_GPP_E12,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioResetDefault,   GpioTermNone}},                      // SATA_ODD_PWREN
-  {GPIO_VER4_S_GPP_F4,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirIn,      GpioOutLow,      GpioIntDis,              GpioResetDefault,   GpioTermNone}},                      // SATA_ODD_DP_N
+  //{GPIO_VER4_S_GPP_F4,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirIn,      GpioOutLow,      GpioIntDis,              GpioResetDefault,   GpioTermNone}},                      // SATA_ODD_DP_N
+  
+  //uATX
+  {GPIO_VER4_S_GPP_F4,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,      GpioIntDefault,           GpioResetDefault,   GpioTermNone }}, //PEG_SLOT_PWREN
+  {GPIO_VER4_S_GPP_E2,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,      GpioIntDefault,          GpioPlatformReset,  GpioTermNone }}, //CPU PEG Slot1 Reset
 
   // Others
   {GPIO_VER4_S_GPP_K5,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutDefault,  GpioIntDefault,          GpioResetDefault,   GpioTermNone}}, // DNX_IN_PROG_AUX_NBIAS

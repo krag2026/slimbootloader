@@ -115,6 +115,7 @@ def check_parameter(para_list):
     para_supported = {
         's14'    : {},
         's17'    : {},
+        'uatx'   : {},
         'debug'  : {},
         'spi'    : {'25MHz', '33MHz', '50MHz', '100MHz'},
         'tsn'    : {'1G1G', '1G25G', '25G1G'},
@@ -126,6 +127,7 @@ def check_parameter(para_list):
         """
         's14'  -- Stitch for S14 board
         's17'  -- Stitch for S17 board
+        'uatx' -- Stitch for uATX board
         'tsn'  -- Enable TSN softstraps with different linkspeeds ('1G1G', '1G2.5G', '2.5G1G')
         'debug'-- Enable DAM and DCI configuration (Only use for debug purpose but not for final production!)
         'spi'  -- Set SPI frequency to be '25MHz', '33MHz', '50MHz' or '100MHz'. By default use 25Mhz.

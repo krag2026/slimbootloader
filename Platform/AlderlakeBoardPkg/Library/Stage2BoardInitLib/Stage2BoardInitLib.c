@@ -481,6 +481,9 @@ BoardInit (
       case PLATFORM_ID_ADL_N_UP7EN50:
         ConfigureGpio (CDATA_NO_TAG, sizeof (mGpioTablePostMemAdlNLpddr5Rvp) / sizeof (mGpioTablePostMemAdlNLpddr5Rvp[0]), (UINT8*)mGpioTablePostMemAdlNLpddr5Rvp);
         break;
+      case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
+        ConfigureGpio (CDATA_NO_TAG, sizeof (mGpioTablePostMemTestsDdr5UDimmRvp) / sizeof (mGpioTablePostMemTestsDdr5UDimmRvp[0]), (UINT8*)mGpioTablePostMemTestsDdr5UDimmRvp);
+        break;
       case PLATFORM_ID_ADL_N_UP2PTWL:
       default:
         break;

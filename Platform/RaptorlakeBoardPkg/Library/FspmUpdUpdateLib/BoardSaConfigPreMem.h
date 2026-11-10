@@ -120,6 +120,28 @@ GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mTestSDdr5RowDisplayDdiConfig3[16] = {
 };
 
 //
+// Display DDI Config for RPL-S uATX: DDIA=DP++, DDIB=DP++, DDIC=HDMI, DDID=HDMI
+//
+GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mRplSUatxDisplayDdiConfig[16] = {
+  DdiPortDisabled, // DDI Port A Config : No eDP/LFP on uATX (external DP++ only)
+  DdiPortDisabled, // DDI Port B Config : No eDP/LFP on uATX
+  DdiHpdEnable,    // DDI Port A HPD : Enable (DDIA = DP++ connector)
+  DdiHpdEnable,    // DDI Port B HPD : Enable (DDIB = DP++ connector)
+  DdiHpdEnable,    // DDI Port C HPD : Enable (DDIC = HDMI ALS)
+  DdiHpdEnable,    // DDI Port 1 HPD : Enable (DDID = HDMI CRLS)
+  DdiHpdDisable,   // DDI Port 2 HPD : Disable (DDIE = Not used)
+  DdiHpdDisable,   // DDI Port 3 HPD : Disable (Not used)
+  DdiHpdDisable,   // DDI Port 4 HPD : Disable (Not used)
+  DdiDdcEnable,    // DDI Port A DDC : Enable (DDIA = DP++)
+  DdiDdcEnable,    // DDI Port B DDC : Enable (DDIB = DP++)
+  DdiDdcEnable,    // DDI Port C DDC : Enable (DDIC = HDMI ALS)
+  DdiDdcEnable,    // DDI Port 1 DDC : Enable (DDID = HDMI CRLS)
+  DdiDisable,      // DDI Port 2 DDC : Disable (DDIE = Not used)
+  DdiDisable,      // DDI Port 3 DDC : Disable (Not used)
+  DdiDisable       // DDI Port 4 DDC : Disable (Not used)
+};
+
+//
 // Display DDI Config 3: DP + DP
 //
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mAdlNddr5CrbRowDisplayDdiConfig[16] = {

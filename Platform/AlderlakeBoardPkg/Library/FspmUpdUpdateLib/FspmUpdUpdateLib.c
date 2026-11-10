@@ -548,6 +548,10 @@ UpdateFspConfig (
     DEBUG((DEBUG_INFO, "PLATFORM_ID_ADL_PS_DDR5_CRB board Id %x .....\n", PlatformId));
     CopyMem(SaDisplayConfigTable, (VOID *)(UINTN)mAdlPSeCRBDDIAHdmiDisplayDdiConfig, sizeof(mAdlPSeCRBDDIAHdmiDisplayDdiConfig));
     break;
+  case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
+    // uATX: DDIA=DP++, DDIB=DP++, DDIC=HDMI, DDID=HDMI
+    CopyMem(SaDisplayConfigTable, (VOID *)(UINTN)mRplSUatxDisplayDdiConfig, sizeof(mRplSUatxDisplayDdiConfig));
+    break;
   case PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP:
   case PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP:
     // DP + DP
