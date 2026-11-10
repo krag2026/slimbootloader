@@ -1,0 +1,266 @@
+diff --git a/Platform/AlderlakeBoardPkg/Include/PlatformBoardId.h b/Platform/AlderlakeBoardPkg/Include/PlatformBoardId.h
+index 726ee8e4..9a9f99d9 100644
+--- a/Platform/AlderlakeBoardPkg/Include/PlatformBoardId.h
++++ b/Platform/AlderlakeBoardPkg/Include/PlatformBoardId.h
+@@ -70,6 +70,9 @@ Defines Platform BoardIds
+ #define BoardIdTestSDdr5UDimm1DRvp                    0x39
+ #define PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP             0x19
+ 
++#define BoardIdRplSUatxDdr5UDimm                      0x2A
++#define PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM             0x1A
++
+ #define BoardIdTestSDdr5SODimmRvp                     0x31  // S17
+ #define PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP            0x11
+ 
+diff --git a/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h b/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h
+index 91f11970..414b006f 100644
+--- a/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h
++++ b/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h
+@@ -119,6 +119,30 @@ GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mTestSDdr5RowDisplayDdiConfig3[16] = {
+   DdiDdcEnable       // DDI Port 4 DDC : DdiDisable = Disable, DdiDdcEnable = Enable DDC
+ };
+ 
++//
++// Display DDI Config for RPL-S uATX: DDIA=DP++, DDIB=DP++, DDIC=HDMI, DDID=HDMI
++//
++GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mRplSUatxDisplayDdiConfig[16] = {
++  DdiPortDisabled, // DDI Port A Config : No eDP/LFP on uATX (external DP++ only)
++  DdiPortDisabled, // DDI Port B Config : No eDP/LFP on uATX
++
++  DdiHpdEnable,    // DDI Port A HPD : Enable (DDIA = DP++ connector)
++  DdiHpdEnable,    // DDI Port B HPD : Enable (DDIB = DP++ connector)
++  DdiHpdEnable,    // DDI Port C HPD : Enable (DDIC = HDMI ALS)
++  DdiHpdEnable,    // DDI Port 1 HPD : Enable (DDID = HDMI CRLS)
++  DdiHpdDisable,   // DDI Port 2 HPD : Disable (DDIE = Not used)
++  DdiHpdDisable,   // DDI Port 3 HPD : Disable (Not used)
++  DdiHpdDisable,   // DDI Port 4 HPD : Disable (Not used)
++
++  DdiDdcEnable,    // DDI Port A DDC : Enable (DDIA = DP++)
++  DdiDdcEnable,    // DDI Port B DDC : Enable (DDIB = DP++)
++  DdiDdcEnable,    // DDI Port C DDC : Enable (DDIC = HDMI ALS)
++  DdiDdcEnable,    // DDI Port 1 DDC : Enable (DDID = HDMI CRLS)
++  DdiDisable,      // DDI Port 2 DDC : Disable (DDIE = Not used)
++  DdiDisable,      // DDI Port 3 DDC : Disable (Not used)
++  DdiDisable       // DDI Port 4 DDC : Disable (Not used)
++};
++
+ //
+ // Display DDI Config 3: DP + DP
+ //
+diff --git a/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c b/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c
+index 6783eb93..31fff1e4 100644
+--- a/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c
++++ b/Platform/AlderlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c
+@@ -548,6 +548,10 @@ UpdateFspConfig (
+     DEBUG((DEBUG_INFO, "PLATFORM_ID_ADL_PS_DDR5_CRB board Id %x .....\n", PlatformId));
+     CopyMem(SaDisplayConfigTable, (VOID *)(UINTN)mAdlPSeCRBDDIAHdmiDisplayDdiConfig, sizeof(mAdlPSeCRBDDIAHdmiDisplayDdiConfig));
+     break;
++  case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
++    // uATX: DDIA=DP++, DDIB=DP++, DDIC=HDMI, DDID=HDMI
++    CopyMem(SaDisplayConfigTable, (VOID *)(UINTN)mRplSUatxDisplayDdiConfig, sizeof(mRplSUatxDisplayDdiConfig));
++    break;
+   case PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP:
+   case PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP:
+     // DP + DP
+diff --git a/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/EcSupport.c b/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/EcSupport.c
+index d137510d..9c14afa9 100644
+--- a/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/EcSupport.c
++++ b/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/EcSupport.c
+@@ -683,6 +683,9 @@ GetBoardId (
+     case BoardIdTestSDdr5UDimm1DRvp:
+       *PlatformId = PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP;
+       break;
++    case BoardIdRplSUatxDdr5UDimm:
++      *PlatformId = PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM;
++      break;
+     case BoardIdTestSDdr5SODimmRvp:
+       *PlatformId = PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP;
+       break;
+diff --git a/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/GpioTableTestPreMem.h b/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/GpioTableTestPreMem.h
+index 0f6ca06b..1be5d4c2 100644
+--- a/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/GpioTableTestPreMem.h
++++ b/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/GpioTableTestPreMem.h
+@@ -13,7 +13,7 @@
+ 
+ GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTableEarlyPreMemTestSDdr5UDimm1DRvp[] =
+ {
+-  {GPIO_VER4_S_GPP_F3,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioResetDefault,   GpioTermNone }}, //PEG_SLOT_PWREN
++  {GPIO_VER4_S_GPP_F4,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioResetDefault,   GpioTermNone }}, //PEG_SLOT_PWREN
+   {GPIO_VER4_S_GPP_E2,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,      GpioIntDefault,          GpioPlatformReset,  GpioTermNone }}, //CPU PEG Slot1 Reset
+ 
+   {GPIO_VER4_S_GPP_H16,  {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioPlatformReset,  GpioTermNone }}, //CPU M.2 SSD Slot Power enable
+diff --git a/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/Stage1BBoardInitLib.c b/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/Stage1BBoardInitLib.c
+index a914c73a..9b3369f7 100644
+--- a/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/Stage1BBoardInitLib.c
++++ b/Platform/AlderlakeBoardPkg/Library/Stage1BBoardInitLib/Stage1BBoardInitLib.c
+@@ -810,6 +810,7 @@ DEBUG_CODE_END();
+     case PLATFORM_ID_ADL_P_DDR5_RVP:
+       ConfigureGpio (CDATA_NO_TAG, sizeof (mGpioTablePreMemAdlPDdr5Rvp) / sizeof (mGpioTablePreMemAdlPDdr5Rvp[0]), (UINT8*)mGpioTablePreMemAdlPDdr5Rvp);
+       break;
++    case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
+     case PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP:
+     case PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP:
+       ConfigureGpio (CDATA_NO_TAG, sizeof (mGpioTableEarlyPreMemTestSDdr5UDimm1DRvp) / sizeof (mGpioTableEarlyPreMemTestSDdr5UDimm1DRvp[0]), (UINT8*)mGpioTableEarlyPreMemTestSDdr5UDimm1DRvp);
+diff --git a/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/GpioTableTestSPostMem.h b/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/GpioTableTestSPostMem.h
+index 932123ed..7c6895e0 100644
+--- a/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/GpioTableTestSPostMem.h
++++ b/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/GpioTableTestSPostMem.h
+@@ -59,9 +59,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTablePostMemTestsDdr5UDimmRv
+   {GPIO_VER4_S_GPP_F2,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutDefault,  GpioIntEdge|GpioIntSci,  GpioHostDeepReset,  GpioTermNone, GpioPadConfigUnlock}}, // PCIe SLOT_3 Wake MIPI60 (Rework)
+ 
+   // PEG SLOT_1
+-  {GPIO_VER4_S_GPP_E6,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutDefault,  GpioIntEdge|GpioIntSci,  GpioHostDeepReset,  GpioTermNone, GpioPadConfigUnlock}}, // PEG SLOT_1 Wake
++  {GPIO_VER4_S_GPP_E6,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutHigh,  GpioIntEdge|GpioIntSci,  GpioHostDeepReset,  GpioTermNone, GpioPadConfigUnlock}}, // PEG SLOT_1 Wake
+   {GPIO_VER4_S_GPP_F7,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutLow,      GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},                      // PEG_SLOT_DGPU_SEL_N, MIPI60 (Rework)
+-  {GPIO_VER4_S_GPP_F9,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirInInv,   GpioOutDefault,  GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},                      // PEG_SLOT_DGPU_PWR_OK, MIPI60 (Rework)
++  {GPIO_VER4_S_GPP_F9,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirInInv,   GpioOutHigh,  GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},                      // PEG_SLOT_DGPU_PWR_OK, MIPI60 (Rework)
+ 
+   // SATA
+   {GPIO_VER4_S_GPP_R11,   {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioPlatformReset,  GpioTermNone}}, // SATA Direct power enable
+@@ -105,7 +105,11 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTablePostMemTestsDdr5UDimmRv
+   // ZPODD
+   {GPIO_VER4_S_GPP_B1,    {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirInInv,   GpioOutDefault,  GpioIntLevel|GpioIntSci, GpioPlatformReset,  GpioTermNone, GpioPadConfigUnlock}}, // SATA_ODD_DA_N
+   {GPIO_VER4_S_GPP_E12,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioResetDefault,   GpioTermNone}},                      // SATA_ODD_PWREN
+-  {GPIO_VER4_S_GPP_F4,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirIn,      GpioOutLow,      GpioIntDis,              GpioResetDefault,   GpioTermNone}},                      // SATA_ODD_DP_N
++  //{GPIO_VER4_S_GPP_F4,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirIn,      GpioOutLow,      GpioIntDis,              GpioResetDefault,   GpioTermNone}},                      // SATA_ODD_DP_N
++  
++  //uATX
++  {GPIO_VER4_S_GPP_F4,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,      GpioIntDefault,           GpioResetDefault,   GpioTermNone }}, //PEG_SLOT_PWREN
++  {GPIO_VER4_S_GPP_E2,   {GpioPadModeGpio, GpioHostOwnAcpi, GpioDirOut,     GpioOutHigh,      GpioIntDefault,          GpioPlatformReset,  GpioTermNone }}, //CPU PEG Slot1 Reset
+ 
+   // Others
+   {GPIO_VER4_S_GPP_K5,    {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutDefault,  GpioIntDefault,          GpioResetDefault,   GpioTermNone}}, // DNX_IN_PROG_AUX_NBIAS
+diff --git a/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/Stage2BoardInitLib.c b/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/Stage2BoardInitLib.c
+index f8b40aa4..4e4e2586 100644
+--- a/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/Stage2BoardInitLib.c
++++ b/Platform/AlderlakeBoardPkg/Library/Stage2BoardInitLib/Stage2BoardInitLib.c
+@@ -481,6 +481,9 @@ BoardInit (
+       case PLATFORM_ID_ADL_N_UP7EN50:
+         ConfigureGpio (CDATA_NO_TAG, sizeof (mGpioTablePostMemAdlNLpddr5Rvp) / sizeof (mGpioTablePostMemAdlNLpddr5Rvp[0]), (UINT8*)mGpioTablePostMemAdlNLpddr5Rvp);
+         break;
++      case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
++        ConfigureGpio (CDATA_NO_TAG, sizeof (mGpioTablePostMemTestsDdr5UDimmRvp) / sizeof (mGpioTablePostMemTestsDdr5UDimmRvp[0]), (UINT8*)mGpioTablePostMemTestsDdr5UDimmRvp);
++        break;
+       case PLATFORM_ID_ADL_N_UP2PTWL:
+       default:
+         break;
+diff --git a/Platform/RaptorlakeBoardPkg/BoardConfigRpls.py b/Platform/RaptorlakeBoardPkg/BoardConfigRpls.py
+index 0f657c3d..b21f1ab5 100644
+--- a/Platform/RaptorlakeBoardPkg/BoardConfigRpls.py
++++ b/Platform/RaptorlakeBoardPkg/BoardConfigRpls.py
+@@ -225,7 +225,7 @@ class Board(BaseBoard):
+         self._generated_cfg_file_prefix = 'Autogen_'
+ 
+         self._CFGDATA_INT_FILE = []
+-        self._CFGDATA_EXT_FILE = [self._generated_cfg_file_prefix + 'CfgDataInt_Rpls_Rvp_Ddr5.dlt', self._generated_cfg_file_prefix + 'CfgDataInt_Rpls_Rvp_SODdr5.dlt']
++        self._CFGDATA_EXT_FILE = [self._generated_cfg_file_prefix + 'CfgDataInt_Rpls_Rvp_Ddr5.dlt', self._generated_cfg_file_prefix + 'CfgDataInt_Rpls_Rvp_SODdr5.dlt', self._generated_cfg_file_prefix + 'CfgDataInt_Rpls_Rvp_Uatx_Ddr5.dlt']
+ 
+     def PlatformBuildHook (self, build, phase):
+         if phase == 'pre-build:before':
+diff --git a/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h b/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h
+index ab608ade..a7034e99 100644
+--- a/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h
++++ b/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/BoardSaConfigPreMem.h
+@@ -119,6 +119,28 @@ GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mTestSDdr5RowDisplayDdiConfig3[16] = {
+   DdiDdcEnable       // DDI Port 4 DDC : DdiDisable = Disable, DdiDdcEnable = Enable DDC
+ };
+ 
++//
++// Display DDI Config for RPL-S uATX: DDIA=DP++, DDIB=DP++, DDIC=HDMI, DDID=HDMI
++//
++GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 mRplSUatxDisplayDdiConfig[16] = {
++  DdiPortDisabled, // DDI Port A Config : No eDP/LFP on uATX (external DP++ only)
++  DdiPortDisabled, // DDI Port B Config : No eDP/LFP on uATX
++  DdiHpdEnable,    // DDI Port A HPD : Enable (DDIA = DP++ connector)
++  DdiHpdEnable,    // DDI Port B HPD : Enable (DDIB = DP++ connector)
++  DdiHpdEnable,    // DDI Port C HPD : Enable (DDIC = HDMI ALS)
++  DdiHpdEnable,    // DDI Port 1 HPD : Enable (DDID = HDMI CRLS)
++  DdiHpdDisable,   // DDI Port 2 HPD : Disable (DDIE = Not used)
++  DdiHpdDisable,   // DDI Port 3 HPD : Disable (Not used)
++  DdiHpdDisable,   // DDI Port 4 HPD : Disable (Not used)
++  DdiDdcEnable,    // DDI Port A DDC : Enable (DDIA = DP++)
++  DdiDdcEnable,    // DDI Port B DDC : Enable (DDIB = DP++)
++  DdiDdcEnable,    // DDI Port C DDC : Enable (DDIC = HDMI ALS)
++  DdiDdcEnable,    // DDI Port 1 DDC : Enable (DDID = HDMI CRLS)
++  DdiDisable,      // DDI Port 2 DDC : Disable (DDIE = Not used)
++  DdiDisable,      // DDI Port 3 DDC : Disable (Not used)
++  DdiDisable       // DDI Port 4 DDC : Disable (Not used)
++};
++
+ //
+ // Display DDI Config 3: DP + DP
+ //
+diff --git a/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c b/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c
+index 3c92bc60..89a93c90 100644
+--- a/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c
++++ b/Platform/RaptorlakeBoardPkg/Library/FspmUpdUpdateLib/FspmUpdUpdateLib.c
+@@ -495,6 +495,10 @@ UpdateFspConfig (
+     DEBUG((DEBUG_INFO, "PLATFORM_ID_ADL_PS_DDR5_CRB board Id %x .....\n", PlatformId));
+     CopyMem(SaDisplayConfigTable, (VOID *)(UINTN)mAdlPSeCRBDDIAHdmiDisplayDdiConfig, sizeof(mAdlPSeCRBDDIAHdmiDisplayDdiConfig));
+     break;
++  case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
++    // uATX: DDIA=DP++, DDIB=DP++, DDIC=HDMI, DDID=HDMI
++    CopyMem(SaDisplayConfigTable, (VOID *)(UINTN)mRplSUatxDisplayDdiConfig, sizeof(mRplSUatxDisplayDdiConfig));
++    break;
+   case PLATFORM_ID_TEST_S_DDR5_UDIMM_RVP:
+   case PLATFORM_ID_TEST_S_DDR5_SODIMM_RVP:
+     // DP + DP
+diff --git a/Platform/RaptorlakeBoardPkg/Library/FspsUpdUpdateLib/FspsUpdUpdateLib.c b/Platform/RaptorlakeBoardPkg/Library/FspsUpdUpdateLib/FspsUpdUpdateLib.c
+index 4176d715..243c938b 100644
+--- a/Platform/RaptorlakeBoardPkg/Library/FspsUpdUpdateLib/FspsUpdUpdateLib.c
++++ b/Platform/RaptorlakeBoardPkg/Library/FspsUpdUpdateLib/FspsUpdUpdateLib.c
+@@ -38,6 +38,8 @@
+ #include <Library/TpmLib.h>
+ #include <Library/FusaConfigLib.h>
+ #include <GpioPinsVer2Lp.h>
++#include <Library/MemoryAllocationLib.h>
++#include "HdaVerbTable.h"
+ 
+ #define CPU_PCIE_DT_HALO_MAX_ROOT_PORT     3
+ #define CPU_PCIE_ULT_ULX_MAX_ROOT_PORT     3
+@@ -410,6 +412,8 @@ UpdateFspConfig (
+   EFI_STATUS                  Status;
+   VBIOS_VBT_STRUCTURE         *VbtPtr;
+   EFI_PLATFORM_FIRMWARE_BLOB  TsnCfgBlob;
++  UINT32                      *HdaVerbTablePtr;
++  UINT8                       HdaVerbTableNum;
+ 
+   Address              = 0;
+   FspsUpd              = (FSPS_UPD *) FspsUpdPtr;
+@@ -1152,6 +1156,16 @@ UpdateFspConfig (
+         FspsConfig->TcssAuxOri = BIT4 | BIT6;
+         FspsConfig->TcssHslOri = 0;
+         break;
++      case PLATFORM_ID_RPL_S_UATX_DDR5_UDIMM:
++        HdaVerbTablePtr = (UINT32 *) AllocateZeroPool (2 * sizeof (UINT32));
++        if (HdaVerbTablePtr != NULL) {
++          HdaVerbTableNum = 0;
++          HdaVerbTablePtr[HdaVerbTableNum++]   = (UINT32)(UINTN) &HdaVerbTableAlc897;
++          FspsConfig->PchHdaVerbTablePtr       = (UINT32)(UINTN) HdaVerbTablePtr;
++          FspsConfig->PchHdaVerbTableEntryNum  = HdaVerbTableNum;
++          DEBUG ((DEBUG_INFO, "Set verb ALC897 table.\n"));
++        }
++        break;
+       default:
+         break;
+     }
+diff --git a/Platform/RaptorlakeBoardPkg/Script/StitchIfwiConfig_rpls.py b/Platform/RaptorlakeBoardPkg/Script/StitchIfwiConfig_rpls.py
+index 2601e7d6..35d1cfce 100644
+--- a/Platform/RaptorlakeBoardPkg/Script/StitchIfwiConfig_rpls.py
++++ b/Platform/RaptorlakeBoardPkg/Script/StitchIfwiConfig_rpls.py
+@@ -115,6 +115,7 @@ def check_parameter(para_list):
+     para_supported = {
+         's14'    : {},
+         's17'    : {},
++        'uatx'   : {},
+         'debug'  : {},
+         'spi'    : {'25MHz', '33MHz', '50MHz', '100MHz'},
+         'tsn'    : {'1G1G', '1G25G', '25G1G'},
+@@ -126,6 +127,7 @@ def check_parameter(para_list):
+         """
+         's14'  -- Stitch for S14 board
+         's17'  -- Stitch for S17 board
++        'uatx' -- Stitch for uATX board
+         'tsn'  -- Enable TSN softstraps with different linkspeeds ('1G1G', '1G2.5G', '2.5G1G')
+         'debug'-- Enable DAM and DCI configuration (Only use for debug purpose but not for final production!)
+         'spi'  -- Set SPI frequency to be '25MHz', '33MHz', '50MHz' or '100MHz'. By default use 25Mhz.
