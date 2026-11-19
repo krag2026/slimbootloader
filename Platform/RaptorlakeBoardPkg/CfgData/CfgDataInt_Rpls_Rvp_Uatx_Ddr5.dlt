@@ -56,8 +56,10 @@ MEMORY_CFG_DATA.TcssDma1En | 0x1
 
 MEMORY_CFG_DATA.PchHdaEnable               | 0x1
 MEMORY_CFG_DATA.PchHdaAudioLinkHdaEnable   | 0x1
-MEMORY_CFG_DATA.PchHdaAudioLinkDmicEnable  | {0x1, 0x1}
-MEMORY_CFG_DATA.PchHdaDspEnable            | 0x1
+MEMORY_CFG_DATA.PchHdaAudioLinkDmicEnable  | {0x0, 0x0}
+MEMORY_CFG_DATA.PchHdaDspEnable            | 0x0
+MEMORY_CFG_DATA.PchHdaAudioLinkSndwEnable  | {0x0, 0x0, 0x0, 0x0}
+
 
 GRAPHICS_CFG_DATA.PrimaryDisplay                | 0x0
 
@@ -142,13 +144,30 @@ GPIO_CFG_DATA.GpioPinConfig1_GPP_I22.GPIOSkip_GPP_I22 | 1
 #GPIO_CFG_DATA.GpioPinConfig0_GPP_I22.GPIOResetConfig_GPP_I22 | 1
 #GPIO_CFG_DATA.GpioPinConfig1_GPP_I22.RxRaw_GPP_I22 | 0
 
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R00.GPIOSkip_GPP_R00 | 1
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R01.GPIOSkip_GPP_R01 | 1
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R02.GPIOSkip_GPP_R02 | 1
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R03.GPIOSkip_GPP_R03 | 1
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R04.GPIOSkip_GPP_R04 | 1
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R05.GPIOSkip_GPP_R05 | 1
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R06.GPIOSkip_GPP_R06 | 1
+# GPP_R00 - HDA_BCLK (Native1)
+GPIO_CFG_DATA.GpioPinConfig1_GPP_R00.GPIOSkip_GPP_R00 | 0
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R00                  | 0x0350A383
+
+# GPP_R01 - HDA_SYNC (Native1)
+GPIO_CFG_DATA.GpioPinConfig1_GPP_R01.GPIOSkip_GPP_R01 | 0
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R01                  | 0x0350A383
+
+# GPP_R02 - HDA_SDO (Native1)
+GPIO_CFG_DATA.GpioPinConfig1_GPP_R02.GPIOSkip_GPP_R02 | 0
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R02                  | 0x0350A283
+
+# GPP_R03 - HDA_SDI0 (Native1)
+GPIO_CFG_DATA.GpioPinConfig1_GPP_R03.GPIOSkip_GPP_R03 | 0
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R03                  | 0x0350A383
+
+# GPP_R04 - HDA_RST# (Native1)
+GPIO_CFG_DATA.GpioPinConfig1_GPP_R04.GPIOSkip_GPP_R04 | 0
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R04                  | 0x0350A383
+
+
+
+
+
 
 GPIO_CFG_DATA.GpioPinConfig1_GPP_R07.GPIOSkip_GPP_R07 | 1
 #GPIO_CFG_DATA.GpioPinConfig0_GPP_R07.GPIOPADMode_GPP_R07 | 1
@@ -161,11 +180,18 @@ GPIO_CFG_DATA.GpioPinConfig1_GPP_R07.GPIOSkip_GPP_R07 | 1
 
 GPIO_CFG_DATA.GpioPinConfig1_GPP_R08.GPIOSkip_GPP_R08 | 1
 GPIO_CFG_DATA.GpioPinConfig1_GPP_R09.GPIOSkip_GPP_R09 | 1
+
+GPIO_CFG_DATA.GpioPinConfig1_GPP_R10.GPIOSkip_GPP_R10           | 0
 GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOHostSoftPadOwn_GPP_R10 | 3
-GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIODirection_GPP_R10 | 5
-GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOOutputState_GPP_R10 | 3
-GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOInterruptConfig_GPP_R10 | 0
-GPIO_CFG_DATA.GpioPinConfig1_GPP_R10.RxRaw_GPP_R10 | 0
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIODirection_GPP_R10      | 5
+GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOOutputState_GPP_R10    | 3
+
+
+#GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOHostSoftPadOwn_GPP_R10 | 3
+#GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIODirection_GPP_R10 | 5
+#GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOOutputState_GPP_R10 | 3
+#GPIO_CFG_DATA.GpioPinConfig0_GPP_R10.GPIOInterruptConfig_GPP_R10 | 0
+#GPIO_CFG_DATA.GpioPinConfig1_GPP_R10.RxRaw_GPP_R10 | 0
 GPIO_CFG_DATA.GpioPinConfig0_GPP_R11.GPIOHostSoftPadOwn_GPP_R11 | 3
 GPIO_CFG_DATA.GpioPinConfig0_GPP_R11.GPIOInterruptConfig_GPP_R11 | 0
 GPIO_CFG_DATA.GpioPinConfig1_GPP_R11.RxRaw_GPP_R11 | 0

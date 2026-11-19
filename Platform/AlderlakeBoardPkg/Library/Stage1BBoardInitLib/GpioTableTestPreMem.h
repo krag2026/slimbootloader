@@ -39,6 +39,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIO_INIT_CONFIG mGpioTableEarlyPreMemTestSDdr5UDi
   {GPIO_VER4_S_GPP_H0,   {GpioPadModeGpio, GpioHostOwnGpio, GpioDirIn,      GpioOutDefault,  GpioIntDefault,          GpioResetDefault,   GpioTermNone }}, //VAL_SV_ADVANCE_STRAP/DISPLAY_ID_1
   {GPIO_VER4_S_GPP_J8,   {GpioPadModeGpio, GpioHostOwnGpio, GpioDirIn ,     GpioOutDefault,  GpioIntDefault,          GpioResetDefault,   GpioTermNone }}, //VAL_TEST_SETUP_MENU/DISPLAY_ID_0
   {GPIO_VER4_S_GPP_E7,   {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},  // GPIO_TBT_RST_N
+  {GPIO_VER4_S_GPP_R10,   {GpioPadModeGpio, GpioHostOwnGpio, GpioDirOut,     GpioOutHigh,     GpioIntDefault,          GpioPlatformReset,  GpioTermNone}},//Codec Power enable
 };
 
 #endif

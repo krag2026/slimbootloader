@@ -963,7 +963,14 @@ UpdateFspConfig (
     FspsConfig->AtomTurboRatioLimitNumCore[5] = 0x0;
     FspsConfig->AtomTurboRatioLimitNumCore[6] = 0x0;
   }
-
+    HdaVerbTablePtr = (UINT32 *) AllocateZeroPool (2 * sizeof (UINT32));
+    if (HdaVerbTablePtr != NULL) {
+      HdaVerbTableNum = 0;
+      HdaVerbTablePtr[HdaVerbTableNum++]   = (UINT32)(UINTN) &HdaVerbTableAlc897;
+      FspsConfig->PchHdaVerbTablePtr       = (UINT32)(UINTN) HdaVerbTablePtr;
+      FspsConfig->PchHdaVerbTableEntryNum  = HdaVerbTableNum;
+      DEBUG ((DEBUG_INFO, "Set verb ALC897 table.\n"));
+    }
   if (IsPchLp ()) {
     for (Index = 0; Index < 4; Index++) {
       FspsConfig->CpuPcieRpLtrMaxSnoopLatency[Index]   = 0x100f;
